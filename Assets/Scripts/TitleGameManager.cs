@@ -42,7 +42,7 @@ public class TitleGameManager : MonoBehaviour
     public void PreviousAudio()
     {
         previousPage.Play();
-    }    
+    }
 
     public void QuitGame()
     {
