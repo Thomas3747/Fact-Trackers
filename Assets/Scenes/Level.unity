@@ -659,7 +659,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &685282136
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1908,8 +1908,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 547.97064, y: -256.8}
-  m_SizeDelta: {x: 130.6769, y: 61.3709}
+  m_AnchoredPosition: {x: 551.1414, y: -256.8}
+  m_SizeDelta: {x: 137.0183, y: 61.3709}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1198038521
 MonoBehaviour:
@@ -1933,9 +1933,9 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 0}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.03137255}
-    m_PressedColor: {r: 0.23137255, g: 0.6862745, b: 0.7176471, a: 0.19607843}
-    m_SelectedColor: {r: 0.23137255, g: 0.6862745, b: 0.7176471, a: 0.19607843}
+    m_HighlightedColor: {r: 0.972549, g: 0.23529412, b: 0.23529412, a: 0.03137255}
+    m_PressedColor: {r: 0.972549, g: 0.23529412, b: 0.23529412, a: 0.19607843}
+    m_SelectedColor: {r: 0.972549, g: 0.23529412, b: 0.23529412, a: 0.19607843}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -4047,6 +4047,18 @@ MonoBehaviour:
       - m_Target: {fileID: 435324}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1986034894}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Toggle, UnityEngine.UI
+        m_MethodName: set_isOn
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
