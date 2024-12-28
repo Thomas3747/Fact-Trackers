@@ -12,8 +12,8 @@ public class TitleGameManager : MonoBehaviour
     public AudioSource bgMusic;
     public Slider musicFXSlider;
     public Slider soundFXSlider;
-    public static float soundFX = 1;
-    public static float musicFX = 1;
+    public static float soundFX = 0.7f;
+    public static float musicFX = 0.3f;
     public float initialsoundFX;
     public float initialmusicFX;
 
