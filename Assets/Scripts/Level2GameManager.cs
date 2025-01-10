@@ -14,54 +14,81 @@ public class Level2GameManager : MonoBehaviour
     public AudioSource detective;
     public AudioSource notification;
     public AudioSource timerNotice;
-    public AudioSource correct;
+    public AudioSource error;
+    public AudioSource correctAnswer;
+    public AudioSource messageTone;
     public Slider musicFXSlider;
     public Slider soundFXSlider;
+    public Slider trustSlider;
     public float soundFX;
     public float musicFX;
     private GameObject[] dropdown;
     private int dropCount;
     private int scorePoints;
+    private int attempts;
+    public TextMeshProUGUI attemptText;
     public TextMeshProUGUI scoreText;
     public GameObject message1;
     public GameObject message2;
     public GameObject message3;
     public GameObject message4;    
+    public GameObject passed;
+    public GameObject messageNotification;
+    public GameObject savedGroupButton;
+    public Button tools;
     public float totalTime;
-    public bool start;
+    public bool chatStart = false;
     public GameObject timeNotice;
-    public GameObject wrongNotice;
+    public GameObject wrongAnswerNotice;
     public GameObject noAnswerNotice;
     public GameObject toolsNotice;
     public GameObject gameOver;
+    public GameObject hintNotice;
+    public TextMeshProUGUI trustScore;
     public TextMeshProUGUI timerText;
-    private float timeRemaining = 60.0f;  // Set timer to 60 seconds (example)
+    private float timeRemaining = 180.0f;  // Set timer to 60 seconds (example)
     private bool isTimerRunning = true;  // Flag to control the timer
-    public GameObject passed;
+    public bool detectiveMode = false;
+    public float fourSeconds = 4;
+    public float threeSeconds = 3;
+    public float twoSeconds = 2;
+    public float oneSecond = 1;
+    public static float trustMeterValue2;
 
+    // Start is called before the first frame update
     void Start()
-    {
-        dropdown = GameObject.FindGameObjectsWithTag("Dropdowns");
-        dropCount = dropdown.Length;
-        Debug.Log(dropCount + " dropdowns left");
+    {        
         AudioSetup();
         scorePoints = 0;
-        start = false;
         totalTime = 300;
         Time.timeScale = 0.0f;
+        chatStart = false;
+        StartCoroutine(StartHint());
     }
 
     // Update is called once per frame
     void Update()
     {
+        trustSlider.value = GameManager.trustMeterValue;
         TitleGameManager.soundFX = soundFXSlider.value;
         TitleGameManager.musicFX = musicFXSlider.value;
         SoundManagement();
-        Debug.Log(scorePoints);
         StartCoroutine(Chatsequence());
-        ToolsNotice();
         timerText.text = totalTime.ToString();
         TimerSetup();
+        ModeChecker();
+    }
+
+    IEnumerator StartHint()
+    {
+        savedGroupButton.GetComponent<Button>().interactable = false;
+        yield return new WaitForSeconds(twoSeconds);        
+        MessageTone();
+        messageNotification.SetActive(true);
+        savedGroupButton.GetComponent<Button>().interactable = true;
+        yield return new WaitForSeconds(fourSeconds);
+        toolsNotice.SetActive(true);
+        notification.Play();
     }
 
     // Function to play click sound upon clicking next button
@@ -81,21 +108,43 @@ public class Level2GameManager : MonoBehaviour
     {
         bgMusic.Play();
     }
+    //function to play once, the detective mode sound
     public void DetectiveMode()
     {
         detective.Play();
+        detectiveMode = true;
     }
 
+    public void MessageTone()
+    {
+        messageTone.Play();
+    }
+
+    public void NormalMode()
+    {
+        Click();
+        detectiveMode = false;
+    }
+
+    public void ModeChecker()
+    {
+        if (detectiveMode == true)
+        {
+            dropdown = GameObject.FindGameObjectsWithTag("Dropdowns");
+            dropCount = dropdown.Length;
+        }
+    }
+    //function to play once, the "time running out" sound
     public void TimerNoticeSound()
     {
         timerNotice.Play();
     }
-
+    //function to play once, the correct answer sound
     public void CorrectSound()
     {
-        correct.Play();
+        correctAnswer.Play();
     }
-
+    //function to play once, the warning sound
     public void Warning()
     {
         notification.Play();
@@ -107,13 +156,13 @@ public class Level2GameManager : MonoBehaviour
         Application.Quit();
     }
 
-    //Function to load Level scene
+    //Function to load Level scene (main level 1)
     public void LoadLevel()
     {
-        SceneManager.LoadScene("Level 2");
+        SceneManager.LoadScene("Level");
         GameStart();
     }
-
+    //Function to load Level 2 scene (main level 2)
     public void LoadLevel2()
     {
         SceneManager.LoadScene("Level 2");
@@ -128,7 +177,9 @@ public class Level2GameManager : MonoBehaviour
         click.volume = TitleGameManager.soundFX;
         detective.volume = TitleGameManager.soundFX;
         notification.volume = TitleGameManager.soundFX;
-        correct.volume = TitleGameManager.soundFX;
+        correctAnswer.volume = TitleGameManager.soundFX;
+        error.volume = TitleGameManager.soundFX;
+        messageTone.volume = TitleGameManager.soundFX;
     }
 
     //Function to reload Title Scene
@@ -136,10 +187,18 @@ public class Level2GameManager : MonoBehaviour
     {
         SceneManager.LoadScene("Title Scene");
     }
+    //Function to update score when a correct answer is given
     public void Scorer()
     {
         scorePoints++;
         scoreText.text = "Right Choices: " + scorePoints;
+        Attempts();
+    }
+
+    public void Attempts()
+    {
+        attempts++;
+        attemptText.text = "/ " + attempts;
     }
 
     public void Success()
@@ -149,6 +208,7 @@ public class Level2GameManager : MonoBehaviour
             Debug.Log("Success");
         }
     }
+    //Audio control settings
     void AudioSetup()
     {
         soundFX = TitleGameManager.soundFX;
@@ -156,49 +216,82 @@ public class Level2GameManager : MonoBehaviour
         soundFXSlider.value = soundFX;
         musicFXSlider.value = musicFX;
     }
-
+    //function to play once, the notice sound
     public void Notice()
     {
         Warning();
     }
-
+    //function to play once, the wrong answer sound
     public void Mistake()
     {
-        Warning();
+        error.Play();
+    }
+    public void ChatStart()
+    {
+        chatStart = true;
     }
 
-
+    //function to control the flow of messages in your chat room
     IEnumerator Chatsequence()
     {
-        if (start == true)
+        if (chatStart == true)
         {
             message1.SetActive(true);
-            yield return new WaitForSeconds(1);
             message2.SetActive(true);
-            yield return new WaitForSeconds(2);
+            yield return new WaitForSeconds(oneSecond);
             message3.SetActive(true);
-            yield return new WaitForSeconds(1);
-            message4.SetActive(true);                       
+            yield return new WaitForSeconds(oneSecond);
+            message4.SetActive(true);
+            tools.interactable = true;
         }
     }
+
+    //function to check if player can progress to the next level
+    //Scorepoints must be greater than 2 to pass which is equivalent to value of the variable twoSeconds
     public void Progress()
     {
-        if (scorePoints > 2)
+        if (detectiveMode == true)
+
         {
-            Passed();
+            if (attempts == 4)
+            {
+                if (scorePoints > threeSeconds)
+                {
+                    Passed();
+                    trustMeterValue2 = scorePoints + GameManager.trustMeterValue;
+                    trustScore.text = "Trust Points:" + trustMeterValue2;
+}
+
+                else if (scorePoints < threeSeconds)
+                {
+                    GameOver();
+                }
+            }
+
+            else
+            {
+                timeNotice.SetActive(false);
+                noAnswerNotice.SetActive(false);
+                toolsNotice.SetActive(false);
+                NoAnswerNotice();
+            }
         }
 
         else
         {
-            GameOver();
+            timeNotice.SetActive(false);
+            noAnswerNotice.SetActive(false);
+            noAnswerNotice.SetActive(false);
+            ToolsNotice();
         }
     }
+
+    //function to progress player to next level upon button click
     public void Passed()
     {
         passed.SetActive(true);
-        Time.timeScale = 0;        
     }
-
+    //Game Timer setup
     void UpdateTimerDisplay()
     {
         // Format the time as minutes:seconds (e.g., 01:30)
@@ -224,7 +317,7 @@ public class Level2GameManager : MonoBehaviour
                 GameOver();
             }
 
-            else if (timeRemaining <= 60)
+            else if (timeRemaining < 60 && timeRemaining > 0)
             {
                 TimeNotice();
             }
@@ -237,14 +330,17 @@ public class Level2GameManager : MonoBehaviour
 
     public void GameStart()
     {
-        start = true;
         Time.timeScale = 1.0f;
+        chatStart = false;
     }
+
+    //This function stops the flow of time in the Game
     public void Pause()
     {
         Time.timeScale = 0.0f;
     }
 
+    //This function restores the flow of time in the Game 
     public void Resume()
     {
         Time.timeScale = 1.0f;
@@ -262,16 +358,15 @@ public class Level2GameManager : MonoBehaviour
     }
     public void WrongAnswerNotice()
     {
-        Warning();
-        noAnswerNotice.SetActive(true);
+        Mistake();
+        noAnswerNotice.SetActive(false);
+        toolsNotice.SetActive(false);
+        timeNotice.SetActive(false);
     }
     public void ToolsNotice()
     {
-        if (start)
-        {
-            Warning();
-            toolsNotice.SetActive(true);
-        }
+        Warning();
+        toolsNotice.SetActive(true);
     }
 
     public void GameOver()
@@ -280,5 +375,3 @@ public class Level2GameManager : MonoBehaviour
         Time.timeScale = 0;
     }
 }
-
-    

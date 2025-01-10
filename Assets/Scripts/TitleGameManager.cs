@@ -33,6 +33,10 @@ public class TitleGameManager : MonoBehaviour
         musicFX = musicFXSlider.value;
         SoundManagement();
     }
+    public void StopBgMusic()
+    {
+        bgMusic.Pause();
+    }
 
     public void NextAudio()
     {

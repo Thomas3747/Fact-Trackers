@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public AudioSource messageTone;
     public Slider musicFXSlider;
     public Slider soundFXSlider;
+    public Slider trustSlider;
     public float soundFX;
     public float musicFX;
     private GameObject[] dropdown;
@@ -35,6 +36,7 @@ public class GameManager : MonoBehaviour
     public GameObject message6;
     public GameObject passed;
     public GameObject messageNotification;
+    public GameObject savedGroupButton;
     public Button tools;
     public float totalTime;
     public bool chatStart = false;
@@ -43,7 +45,9 @@ public class GameManager : MonoBehaviour
     public GameObject noAnswerNotice;
     public GameObject toolsNotice;
     public GameObject gameOver;
+    public GameObject hintNotice;
     public TextMeshProUGUI timerText;
+    public TextMeshProUGUI trustScore;
     private float timeRemaining = 180.0f;  // Set timer to 60 seconds (example)
     private bool isTimerRunning = true;  // Flag to control the timer
     public bool detectiveMode = false;
@@ -51,10 +55,11 @@ public class GameManager : MonoBehaviour
     public float threeSeconds = 3;
     public float twoSeconds = 2;
     public float oneSecond = 1;
+    public static float trustMeterValue;
 
     // Start is called before the first frame update
     void Start()
-    {
+    {        
         AudioSetup();
         scorePoints = 0;
         totalTime = 300;
@@ -66,6 +71,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        trustSlider.value = 0;
         TitleGameManager.soundFX = soundFXSlider.value;
         TitleGameManager.musicFX = musicFXSlider.value;
         SoundManagement();
@@ -77,9 +83,11 @@ public class GameManager : MonoBehaviour
 
     IEnumerator StartHint()
     {
+        savedGroupButton.GetComponent<Button>().interactable = false;
         yield return new WaitForSeconds(twoSeconds);
         MessageTone();
         messageNotification.SetActive(true);
+        savedGroupButton.GetComponent<Button>().interactable = true;
         yield return new WaitForSeconds(fourSeconds);
         toolsNotice.SetActive(true);
         notification.Play();        
@@ -253,9 +261,11 @@ public class GameManager : MonoBehaviour
         {
             if (attempts == 3)
             {
-                if (scorePoints > twoSeconds)
+                if (scorePoints >= twoSeconds)
                 {
                     Passed();
+                    trustMeterValue = scorePoints;
+                    trustScore.text = "Trust Points:" + trustMeterValue;
                 }
 
                 else if (scorePoints < twoSeconds)
